@@ -6,4 +6,5 @@ object Constants {
   final val POP_PLAYERS_CATEGORY = 0
   final val SCIENCE_PLAYERS_CATEGORY = 1
   final val SPORTS_PLAYERS_CATEGORY = 2
+  final val ROCK_PLAYERS_CATEGORY = 3
 }

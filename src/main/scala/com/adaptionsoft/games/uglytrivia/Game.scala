@@ -1,11 +1,11 @@
 package com.adaptionsoft.games.uglytrivia
 
-import com.adaptionsoft.games.uglytrivia.Constants.{DEFAULT_NUMBER_OF_QUESTIONS, POP_PLAYERS_CATEGORY, SCIENCE_PLAYERS_CATEGORY, SPORTS_PLAYERS_CATEGORY}
+import com.adaptionsoft.games.uglytrivia.Constants.{DEFAULT_NUMBER_OF_QUESTIONS, POP_PLAYERS_CATEGORY, ROCK_PLAYERS_CATEGORY, SCIENCE_PLAYERS_CATEGORY, SPORTS_PLAYERS_CATEGORY}
 import com.adaptionsoft.games.uglytrivia.QuestionCategories.{Pop, Rock, Science, Sports}
 import com.adaptionsoft.games.uglytrivia.Questions.generateQuestions
 
 import scala.collection.immutable.Queue
-import java.util.{ArrayList}
+import java.util.ArrayList
 
 
 class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
@@ -22,9 +22,10 @@ class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
   var currentPlayer: Int = 0
   var isGettingOutOfPenaltyBox: Boolean = false
   
+  // to be used after all players are added to the game in order to validate it
   def isPlayable: Boolean = (howManyPlayers >= 2)
 
-  def add(playerName: String): Boolean =
+  def addPlayer(playerName: String): Boolean =
     players.add(playerName)
     places(howManyPlayers) = 0
     purses(howManyPlayers) = 0
@@ -46,7 +47,7 @@ class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
         if (places(currentPlayer) > 11) places(currentPlayer) = places(currentPlayer) - 12
         println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
         println("The category is " + currentCategory)
-        askQuestion
+        askQuestion(currentCategory)
       }
       else {
         println(players.get(currentPlayer) + " is not getting out of the penalty box")
@@ -58,32 +59,35 @@ class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
       if (places(currentPlayer) > 11) places(currentPlayer) = places(currentPlayer) - 12
       println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
       println("The category is " + currentCategory)
-      askQuestion
+      askQuestion(currentCategory)
     }
 
-  private def askQuestion: Unit =
-    if (currentCategory == "Pop") println(popQuestions.dequeue)
-    if (currentCategory == "Science") println(scienceQuestions.dequeue)
-    if (currentCategory == "Sports") println(sportsQuestions.dequeue)
-    if (currentCategory == "Rock") println(rockQuestions.dequeue)
+  private def askQuestion(currentCategory: String): Unit =
+    currentCategory match {
+      case Pop => println(popQuestions.dequeue)
+      case Science => println(scienceQuestions.dequeue)
+      case Sports => println(sportsQuestions.dequeue)
+      case Rock => println(rockQuestions.dequeue)
+      case _ => println(s"UNKNOWN CATEGORY DETECTED! $currentCategory")
+    }
 
   private def currentCategory: String =
-    places(currentPlayer) % 4 match {
+    /*
+    4 may be the number of categories
+      1. first category is pop <=> 0
+      2. second category is science <=> 1
+      3. third category is sports <=> 2
+      4. fourth category is rock <=> 3
+     */
+    val numberOfGameCategories = 4
+    
+    places(currentPlayer) % numberOfGameCategories match {
       case POP_PLAYERS_CATEGORY => Pop
       case SCIENCE_PLAYERS_CATEGORY => Science
       case SPORTS_PLAYERS_CATEGORY => Sports
-      case _ => Rock
+      case ROCK_PLAYERS_CATEGORY => Rock
+      case _ => throw new Exception("ERROR IN CURRENT CATEGORY")
     }
-  //    if (places(currentPlayer) == 0) return "Pop"
-//    if (places(currentPlayer) == 4) return "Pop"
-//    if (places(currentPlayer) == 8) return "Pop"
-//    if (places(currentPlayer) == 1) return "Science"
-//    if (places(currentPlayer) == 5) return "Science"
-//    if (places(currentPlayer) == 9) return "Science"
-//    if (places(currentPlayer) == 2) return "Sports"
-//    if (places(currentPlayer) == 6) return "Sports"
-//    if (places(currentPlayer) == 10) return "Sports"
-//    "Rock"
 
   def wasCorrectlyAnswered: Boolean =
     if (inPenaltyBox(currentPlayer)) {
