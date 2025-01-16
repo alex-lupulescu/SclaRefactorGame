@@ -1,6 +1,5 @@
 package com.adaptionsoft.games.uglytrivia
 
-import com.adaptionsoft.games.uglytrivia.Constants.DEFAULT_NUMBER_OF_QUESTIONS
 import com.adaptionsoft.games.uglytrivia.QuestionCategories.{Pop, Rock, Science, Sports}
 
 import scala.collection.immutable.Queue
@@ -13,18 +12,18 @@ final case class Questions(
                     )
 
 object Questions {
-  val questions: Questions = {
-    def populateQuestions(category: String, numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS) = {
-      (1 to numberOfQuestions)
-        .map(questionNumber => s"$category Question $questionNumber")
-        .toList
-    }
-
-    Questions(pop = Queue(populateQuestions(Pop): _*),
-      science = Queue(populateQuestions(Science): _*),
-      sports = Queue(populateQuestions(Sports): _*),
-      rock = Queue(populateQuestions(Rock): _*)
+  def generateQuestions(numberOfQuestions: Int): Questions = {
+    Questions(pop = Queue(populateQuestions(Pop, numberOfQuestions): _*),
+      science = Queue(populateQuestions(Science, numberOfQuestions): _*),
+      sports = Queue(populateQuestions(Sports, numberOfQuestions): _*),
+      rock = Queue(populateQuestions(Rock, numberOfQuestions): _*)
     )
+  }
+  
+  private def populateQuestions(category: String, numberOfQuestions: Int) = {
+    (1 to numberOfQuestions)
+      .map(questionNumber => s"$category Question $questionNumber")
+      .toList
   }
   
 }

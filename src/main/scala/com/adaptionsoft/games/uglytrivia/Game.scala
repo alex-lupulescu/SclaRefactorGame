@@ -1,14 +1,24 @@
 package com.adaptionsoft.games.uglytrivia
 
-import java.util.{LinkedList, ArrayList}
+import com.adaptionsoft.games.uglytrivia.Constants.{DEFAULT_NUMBER_OF_QUESTIONS, POP_PLAYERS_CATEGORY, SCIENCE_PLAYERS_CATEGORY, SPORTS_PLAYERS_CATEGORY}
+import com.adaptionsoft.games.uglytrivia.QuestionCategories.{Pop, Rock, Science, Sports}
+import com.adaptionsoft.games.uglytrivia.Questions.generateQuestions
+
+import scala.collection.immutable.Queue
+import java.util.{ArrayList}
 
 
-class Game:
+class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
   var players: ArrayList[String] = new ArrayList[String]
   var places: Array[Int] = new Array[Int](6)
   var purses: Array[Int] = new Array[Int](6)
   var inPenaltyBox: Array[Boolean] = new Array[Boolean](6)
-  val (popQuestions, scienceQuestions, sportsQuestions, rockQuestions) = (Questions.questions.pop, Questions.questions.science, Questions.questions.sports, Questions.questions.rock)
+
+  val popQuestions: Queue[String] = generateQuestions(numberOfQuestions).pop
+  val scienceQuestions: Queue[String] = generateQuestions(numberOfQuestions).science
+  val sportsQuestions: Queue[String] = generateQuestions(numberOfQuestions).sports
+  val rockQuestions: Queue[String] = generateQuestions(numberOfQuestions).rock
+
   var currentPlayer: Int = 0
   var isGettingOutOfPenaltyBox: Boolean = false
   
@@ -58,16 +68,22 @@ class Game:
     if (currentCategory == "Rock") println(rockQuestions.dequeue)
 
   private def currentCategory: String =
-    if (places(currentPlayer) == 0) return "Pop"
-    if (places(currentPlayer) == 4) return "Pop"
-    if (places(currentPlayer) == 8) return "Pop"
-    if (places(currentPlayer) == 1) return "Science"
-    if (places(currentPlayer) == 5) return "Science"
-    if (places(currentPlayer) == 9) return "Science"
-    if (places(currentPlayer) == 2) return "Sports"
-    if (places(currentPlayer) == 6) return "Sports"
-    if (places(currentPlayer) == 10) return "Sports"
-    "Rock"
+    places(currentPlayer) % 4 match {
+      case POP_PLAYERS_CATEGORY => Pop
+      case SCIENCE_PLAYERS_CATEGORY => Science
+      case SPORTS_PLAYERS_CATEGORY => Sports
+      case _ => Rock
+    }
+  //    if (places(currentPlayer) == 0) return "Pop"
+//    if (places(currentPlayer) == 4) return "Pop"
+//    if (places(currentPlayer) == 8) return "Pop"
+//    if (places(currentPlayer) == 1) return "Science"
+//    if (places(currentPlayer) == 5) return "Science"
+//    if (places(currentPlayer) == 9) return "Science"
+//    if (places(currentPlayer) == 2) return "Sports"
+//    if (places(currentPlayer) == 6) return "Sports"
+//    if (places(currentPlayer) == 10) return "Sports"
+//    "Rock"
 
   def wasCorrectlyAnswered: Boolean =
     if (inPenaltyBox(currentPlayer)) {
