@@ -22,7 +22,6 @@ class Game(numberOfQuestions: Int = DEFAULT_NUMBER_OF_QUESTIONS):
   var currentPlayer: Int = 0
   var isGettingOutOfPenaltyBox: Boolean = false
   
-  // to be used after all players are added to the game in order to validate it
   def isPlayable: Boolean = (howManyPlayers >= 2)
 
   def addPlayer(playerName: String): Boolean =
