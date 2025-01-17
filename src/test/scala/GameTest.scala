@@ -13,4 +13,20 @@ class GameTest extends AnyFunSuite{
     assert(game.rockQuestions.size == 50)
   }
 
+  test("Unplayable game") {
+    val game = new Game()
+    game.addPlayer("onePlayer")
+
+    assert(!game.isPlayable, "Game should not be playable with only one player.")
+  }
+
+  test("Playable game") {
+    val game = new Game()
+    game.addPlayer("playerOne")
+    game.addPlayer("playerTwo")
+    game.addPlayer("playerThree")
+
+    assert(game.isPlayable, "Game should be playable if it has 2 ore more players!")
+  }
+
 }
