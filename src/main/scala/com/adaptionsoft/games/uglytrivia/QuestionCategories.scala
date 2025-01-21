@@ -7,5 +7,4 @@ object QuestionCategories extends Enumeration {
   val Science: QuestionCategory = "Science"
   val Sports: QuestionCategory = "Sports"
   val Rock: QuestionCategory = "Rock"
-
 }

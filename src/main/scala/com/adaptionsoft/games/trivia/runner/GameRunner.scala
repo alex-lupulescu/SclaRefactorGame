@@ -1,25 +1,24 @@
 package com.adaptionsoft.games.trivia.runner
 
 import com.adaptionsoft.games.uglytrivia.Game
-import java.util.Random
-
+import scala.annotation.tailrec
+import scala.util.Random
 
 object GameRunner:
-  var notAWinner = true
 
-  @main def main(): Unit =
-    var aGame = new Game();
-    aGame.add("Chet")
-    aGame.add("Pat")
-    aGame.add("Sue")
+  def main(args: Array[String]): Unit =
+    val gameSession =
+      Game.initializeGame(50)
+        .add("Chet")
+        .add("Pat")
+        .add("Sue")
 
-    var rand: Random = new Random
+    runGame(gameSession, new Random())
 
-    while notAWinner do
-      aGame.roll(rand.nextInt(5) + 1)
-      if (rand.nextInt(9) == 7) {
-        notAWinner = aGame.wrongAnswer
-      }
-      else {
-        notAWinner = aGame.wasCorrectlyAnswered
-      }
+  @tailrec
+  def runGame(gameSession: Game, rand: Random): Game =
+    val rollSession = gameSession.roll(rand.nextInt(5) + 1)
+    val (updatedSession, winner) = if (rand.nextInt(9) == 7) rollSession.wrongAnswer else rollSession.correctAnswer
+
+    if (!winner) updatedSession else runGame(updatedSession, rand)
+
